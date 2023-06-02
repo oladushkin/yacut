@@ -11,3 +11,4 @@ class Config(object):
 
 
 BASE_URL = 'http://localhost/'
+CUSTOM_ID_RE = '^[a-zA-Z0-9]+$'

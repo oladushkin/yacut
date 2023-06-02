@@ -1,5 +1,5 @@
 from flask import jsonify, request
-
+from http import HTTPStatus
 from . import app, db
 from .error_handlers import InvalidAPIUsage
 from .models import URLMap
@@ -15,7 +15,7 @@ def post_url():
     validators_url(data)
     if 'custom_id' not in data:
         data['custom_id'] = get_unique_short_id()
-    if data['custom_id'] == '' or data['custom_id'] is None:
+    if not data['custom_id']:
         data['custom_id'] = get_unique_short_id()
     validators_castom_id(data)
     url = URLMap(
@@ -24,7 +24,7 @@ def post_url():
     )
     db.session.add(url)
     db.session.commit()
-    return jsonify(url.post_to_dict()), 201
+    return jsonify(url.post_to_dict()), HTTPStatus.CREATED
 
 
 @app.route('/api/id/<string:short_id>/', methods=['GET'])
@@ -32,4 +32,4 @@ def get_url(short_id):
     url = URLMap.query.filter_by(short=short_id).first()
     if url is None:
         raise InvalidAPIUsage('Указанный id не найден', 404)
-    return jsonify(url.get_to_dict()), 200
+    return jsonify(url.get_to_dict()), HTTPStatus.OK

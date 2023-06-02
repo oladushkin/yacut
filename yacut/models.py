@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from yacut import db
+from settings import BASE_URL
+from urllib.parse import urljoin
 
 
 class URLMap(db.Model):
@@ -17,10 +19,10 @@ class URLMap(db.Model):
     def post_to_dict(self):
         return dict(
             url=self.original,
-            short_link='http://localhost/' + self.short
+            short_link=urljoin(BASE_URL, self.short)
         )
 
     def from_dict(self, data):
-        for field in ['original', 'short']:
+        for field in ('original', 'short'):
             if field in data:
                 setattr(self, field, data[field])
